@@ -22,7 +22,6 @@
 // GLOBAL VARS
 var gl;
 var program;
-var canvas;
 const mat4 = glMatrix.mat4;
 
 // Interactive vars for transformation
@@ -35,7 +34,7 @@ window.onload = function initCanvas()
     // console log for succesful call
     console.log('initCanvas() was called');
 
-    canvas = document.getElementById('TermProject');
+    const canvas = document.getElementById('TermProject');
     gl = canvas.getContext('webgl');
     
     if (!gl) 

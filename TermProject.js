@@ -47,18 +47,26 @@ window.onload = function initCanvas()
 
     // 2) 
     const buffer = gl.createBuffer();
+    // bind this buffer as the current array buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    // load into the currently bound buffer
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     
     // 3)
     const vertexShader = gl.createShader(gl.VERTEX_SHADER);
+    // get vertex shader script element from .html
     var vertexSource = document.getElementById('vertex-shader');
+    // specify this as the source code to vertexShader
     gl.shaderSource(vertexShader, vertexSource.text);
+    // compile the vertex shader 
     gl.compileShader(vertexShader);
 
     const fragmentShader = gl.createShader(gl.FRAGMENT_SHADER);
+    // get fragment shader script element from .html
     var fragmentSource = document.getElementById('fragment-shader');
+    // specify this as the source code to fragmentShader
     gl.shaderSource(fragmentShader, fragmentSource.text);
+    // compile the fragment shader
     gl.compileShader(fragmentShader);
 
     const program = gl.createProgram();
@@ -67,6 +75,7 @@ window.onload = function initCanvas()
     gl.linkProgram(program);
 
     // 4)
+    // (linked program, name of attribute in vertex shader)
     const attribLoc = gl.getAttribLocation(program, 'vPosition');
     gl.enableVertexAttribArray(attribLoc);
     // (position, elements to read, type, normalized, stride, offset)
@@ -75,12 +84,13 @@ window.onload = function initCanvas()
     // tell webgl which program to use
     gl.useProgram(program);
 
+    //5)
+    // call render to draw
     render();
 }
 
 var render = function() 
 {
-    console.log('I was called');
     // (draw mode, start vertex, how many vertices to draw)
     gl.drawArrays(gl.TRIANGLES, 0, 3); 
 }

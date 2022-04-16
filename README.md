@@ -1,11 +1,10 @@
 # CG-TermProject-AnthonyLupica
-Computer Graphics Term Project 2022
 
-
-_____________________________________________________________________________________
 CS 3460:457/557 Computer Graphics
 Term Project
+
 Design Report Due: Thursday, March 31, 2022
+
 Project Due: Tuesday, April 19, 2022
 _____________________________________________________________________________________
 

@@ -26,7 +26,6 @@ const mat4 = glMatrix.mat4;
 
 // Interactive vars for transformation
 var theta = 0;
-var speedup = 0
 
 //--initialize canvas--//
 
@@ -131,7 +130,7 @@ window.onkeydown = function handleSpace(event)
     console.log("handleSpace() was called");
     if (event.key == ' ')
     {
-         speedup += Math.PI/12;
+         theta += Math.PI/12;
     }
 }
 
@@ -157,7 +156,6 @@ var render = function()
     mat4.translate(matrix, matrix, [0.0, 0.2, 0.0]);
     mat4.scale(matrix, matrix, [0.5, 0.5, 0.5]);
     // rotation is affected by the dyanamic var "theta"
-    theta += Math.PI/12 + speedup;
     mat4.rotateZ(matrix, matrix, theta);
 
     // map CPU matrix to GPU

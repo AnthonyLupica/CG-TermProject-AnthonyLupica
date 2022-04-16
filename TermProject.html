@@ -40,15 +40,17 @@
         <script type="text/javascript" src="TermProject.js"></script>
     </head>
     <body>
-        <div style = "text-align:center;">
-            <h1>Computer Graphics Term Project 2022</h1>
-            <canvas id="TermProject" width="575" height="575">
-                <!-- if this line is reached, the canvas element could not be processed -->
-                Oh no! Looks like your browser doesn't support HTML5
-            </canvas>
-            <!-- display a message beneath the canvas -->
-            <i><br><br>Anthony Lupica [arl127@uakron.edu]</i>
-        </div>
+        <canvas id="TermProject">
+            <!-- if this line is reached, the canvas element could not be processed -->
+            Oh no! Looks like your browser doesn't support HTML5
+        </canvas>
+        <!-- Use a script to set the canvas width/height to the window width/height -->
+        <script>
+            // in "getElementsByTagName('canvas')[0]" the [0] gets the first <canvas> in the document
+            const getCanvas = document.getElementsByTagName('canvas')[0];
+            getCanvas.width = window.innerWidth;
+            getCanvas.height = window.innerHeight;
+        </script>
     </body>
 </html>
 

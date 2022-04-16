@@ -5,10 +5,10 @@
 /*
     webgl checklist
 
-    1) make vertices 
+    1) make vertices (postion/color)
     
-    2) create buffer 
-       load vertices into buffer
+    2) create buffers
+       load vertices into buffers
     
     3) make a vertex shader
        make a fragment shader
@@ -45,13 +45,26 @@ window.onload = function initCanvas()
         -1, -1, 0
     ];
 
+    const colors = 
+    [
+        1, 0, 0,
+        0, 1, 0, 
+        0, 0, 1
+    ];
+
     // 2) 
-    const buffer = gl.createBuffer();
+    const vBuffer = gl.createBuffer();
     // bind this buffer as the current array buffer
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     // load into the currently bound buffer
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     
+    const cBuffer = gl.createBuffer();
+    // bind this buffer as the current array buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+    // load into the currently bound buffer
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+
     // 3)
     const vertexShader = gl.createShader(gl.VERTEX_SHADER);
     // get vertex shader script element from .html
@@ -69,17 +82,28 @@ window.onload = function initCanvas()
     // compile the fragment shader
     gl.compileShader(fragmentShader);
 
+    // create a program
     const program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
 
     // 4)
+    // vPosition attribute
     // (linked program, name of attribute in vertex shader)
-    const attribLoc = gl.getAttribLocation(program, 'vPosition');
-    gl.enableVertexAttribArray(attribLoc);
+    const vAttribLoc = gl.getAttribLocation(program, 'vPosition');
+    gl.enableVertexAttribArray(vAttribLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     // (position, elements to read, type, normalized, stride, offset)
-    gl.vertexAttribPointer(attribLoc, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(vAttribLoc, 3, gl.FLOAT, false, 0, 0);
+
+    // vColor attribute
+    // (linked program, name of attribute in vertex shader)
+    const cAttribLoc = gl.getAttribLocation(program, 'vColor');
+    gl.enableVertexAttribArray(cAttribLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+    // (position, elements to read, type, normalized, stride, offset)
+    gl.vertexAttribPointer(cAttribLoc, 3, gl.FLOAT, false, 0, 0);
 
     // tell webgl which program to use
     gl.useProgram(program);

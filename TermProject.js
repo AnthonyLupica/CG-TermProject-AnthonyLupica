@@ -40,16 +40,16 @@ window.onload = function initCanvas()
     // 1)
     const vertices = 
     [
-        0, 1, 0,
-        1, -1, 0, 
-        -1, -1, 0
+        0, 1, 0,      // vertex 1 position
+        1, -1, 0,     // vertex 2 position
+        -1, -1, 0     // vertex 3 position 
     ];
 
     const colors = 
     [
-        1, 0, 0,
-        0, 1, 0, 
-        0, 0, 1
+        1, 0, 0,      // vertex 1 color
+        0, 1, 0,      // vertex 2 color
+        0, 0, 1       // vertex 3 color 
     ];
 
     // 2) 
@@ -91,19 +91,19 @@ window.onload = function initCanvas()
     // 4)
     // vPosition attribute
     // (linked program, name of attribute in vertex shader)
-    const vAttribLoc = gl.getAttribLocation(program, 'vPosition');
-    gl.enableVertexAttribArray(vAttribLoc);
+    const vertexPositionLoc = gl.getAttribLocation(program, 'vPosition');
+    gl.enableVertexAttribArray(vertexPositionLoc);
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     // (position, elements to read, type, normalized, stride, offset)
-    gl.vertexAttribPointer(vAttribLoc, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(vertexPositionLoc, 3, gl.FLOAT, false, 0, 0);
 
     // vColor attribute
     // (linked program, name of attribute in vertex shader)
-    const cAttribLoc = gl.getAttribLocation(program, 'vColor');
-    gl.enableVertexAttribArray(cAttribLoc);
+    const vertexColorLoc = gl.getAttribLocation(program, 'vColor');
+    gl.enableVertexAttribArray(vertexColorLoc);
     gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
     // (position, elements to read, type, normalized, stride, offset)
-    gl.vertexAttribPointer(cAttribLoc, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(vertexColorLoc, 3, gl.FLOAT, false, 0, 0);
 
     // tell webgl which program to use
     gl.useProgram(program);

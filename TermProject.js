@@ -14,13 +14,19 @@
        make a fragment shader
        create a program and attach the shaders
 
-    4) enable vertex attributes
+    4) enable vertex attributes and uniforms
 
     5) draw to screen
 */
 
 // GLOBAL VARS
 var gl;
+var program;
+var canvas;
+const mat4 = glMatrix.mat4;
+
+// Interactive vars for transformation
+var theta = 0;
 
 //--initialize canvas--//
 
@@ -29,13 +35,20 @@ window.onload = function initCanvas()
     // console log for succesful call
     console.log('initCanvas() was called');
 
-    const canvas = document.getElementById('TermProject');
+    canvas = document.getElementById('TermProject');
     gl = canvas.getContext('webgl');
     
     if (!gl) 
     { 
         alert("WebGL isn't available on your browser");
     }
+    
+    // set viewing window
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    // set color of canvas (R, G, B, alpha "for opacity")
+    gl.clearColor(0.835, 0.815, 0.915, 1.0);
+    // for hidden surface removal
+    gl.enable(gl.DEPTH_TEST);
 
     // 1)
     const vertices = 
@@ -83,7 +96,7 @@ window.onload = function initCanvas()
     gl.compileShader(fragmentShader);
 
     // create a program
-    const program = gl.createProgram();
+    program = gl.createProgram();
     gl.attachShader(program, vertexShader);
     gl.attachShader(program, fragmentShader);
     gl.linkProgram(program);
@@ -113,8 +126,42 @@ window.onload = function initCanvas()
     render();
 }
 
+window.onkeydown = function handleSpace(event) 
+{
+    console.log("handleSpace() was called");
+    if (event.key == ' ')
+    {
+         theta += Math.PI/6;
+    }
+}
+
 var render = function() 
 {
+    // calls for animation
+    requestAnimationFrame(render);
+
+    gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
+
+    // get uniform locations 
+    const uniformLoc = 
+    {
+        matrix: gl.getUniformLocation(program, 'transformMatrix')
+    };
+    
+    /* gl-matrix.js objects (mat4) call transformation methods w/ args (output matrix, input matrix, transform vector) */
+    
+    // create matrix
+    const matrix = mat4.create();
+    
+    // apply transformations
+    mat4.translate(matrix, matrix, [0, 0.2, 0]);
+    mat4.scale(matrix, matrix, [0.5, 0.5, 0.5]);
+    // rotation is affected by the dyanamic var "theta"
+    mat4.rotateZ(matrix, matrix, theta);
+
+    // map CPU matrix to GPU
+    gl.uniformMatrix4fv(uniformLoc.matrix, false, matrix);
+    
     // (draw mode, start vertex, how many vertices to draw)
     gl.drawArrays(gl.TRIANGLES, 0, 3); 
 }

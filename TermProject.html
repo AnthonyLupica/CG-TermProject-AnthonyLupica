@@ -14,11 +14,13 @@
             attribute vec3 vPosition;
             attribute vec3 vColor;
             varying vec3 fColor;
+
+            uniform mat4 transformMatrix;
             
             void main()
             {   
                 fColor = vColor;
-                gl_Position = vec4(vPosition, 1);
+                gl_Position = transformMatrix * vec4(vPosition, 1);
             }
         </script>
         <script id="fragment-shader" type="x-shader/x-fragment">
@@ -31,20 +33,22 @@
             }
         </script>
 
-        <!-- include any files from the common folder here -->
-        <script type="text/javascript" src="Common/MV.js"></script>
+        <!-- include any external libraries here -->
+        <script type="text/javascript" src="gl-matrix.js"></script>
 
-        <!-- include TermProject.js here and call with onload event -->
+        <!-- include TermProject.js here and call with window.onload event -->
         <script type="text/javascript" src="TermProject.js"></script>
     </head>
     <body>
-        <h1>Computer Graphics Term Project 2022!</h1>
-        <canvas id="TermProject" width="550" height="350">
-            <!-- if this line is reached, the canvas element could not be processed -->
-            Oh no! Looks like your browser doesn't support HTML5
-        </canvas>
-        <!-- display a message beneath the canvas -->
-        <i><br><br>Anthony Lupica [arl127@uakron.edu]</i>
+        <div style = "text-align:center;">
+            <h1>Computer Graphics Term Project 2022</h1>
+            <canvas id="TermProject" width="575" height="575">
+                <!-- if this line is reached, the canvas element could not be processed -->
+                Oh no! Looks like your browser doesn't support HTML5
+            </canvas>
+            <!-- display a message beneath the canvas -->
+            <i><br><br>Anthony Lupica [arl127@uakron.edu]</i>
+        </div>
     </body>
 </html>
 

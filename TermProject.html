@@ -9,6 +9,22 @@
         <!-- title of web page in URL -->
         <title>CG-TermProject-AnthonyLupica</title>
 
+        <!-- scripts for vertex shader and fragment shader -->
+        <script id="vertex-shader" type="x-shader/x-vertex">
+            attribute vec3 vPosition;
+            
+            void main()
+            {   
+                gl_Position = vec4(vPosition, 1);
+            }
+        </script>
+        <script id="fragment-shader" type="x-shader/x-fragment">
+            void main()
+            {
+                gl_FragColor = vec4(1, 0, 0, 1);
+            }
+        </script>
+
         <!-- include any files from the common folder here -->
         <script type="text/javascript" src="Common/webgl-utils.js"></script>
         <script type="text/javascript" src="Common/initShaders.js"></script>

@@ -23,13 +23,37 @@
 var gl;
 var program;
 const mat4 = glMatrix.mat4;
+const vec3 = glMatrix.vec3;
 
-// # number of vertices for a cube
-const NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
+const NumPoints = 10000; // number of points to generate in the volume
 
 // Interactive vars for transformation
 var theta = 0;
 var speedup = 0;
+
+// pointCloud accepts a parameter for the "numPoints" to generate
+// and returns an array of numPoints*3 vertices
+function galaxy(numPoints)
+{
+    let points = [];
+    for (let i = 0; i < numPoints; ++i)
+    {
+        // generate a random point within a radius of 0.5 of the origin
+        // Math.random() generates numbers in [0, 1), so we subtract by 0.5
+        // to generate numbers in [-0.5, 0.5)
+        const x = Math.random() - 0.5;
+        const y = Math.random() - 0.5;
+        const z = Math.random() - 0.5;
+
+        const randomPoint = [x, y, z];
+
+        // normalizing the points brings them all into a constant distance from the origin (aka a sphere)
+        vec3.normalize(randomPoint, randomPoint);
+
+        points.push(...randomPoint);
+    }
+    return points;
+}
 
 //--initialize canvas--//
 
@@ -49,85 +73,15 @@ window.onload = function initCanvas()
     // set viewing window
     gl.viewport(0, 0, canvas.width, canvas.height);
     // set color of canvas (R, G, B, alpha "for opacity")
-    gl.clearColor(0.835, 0.815, 0.915, 1.0);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
     // for hidden surface removal
     gl.enable(gl.DEPTH_TEST);
 
     // 1)
 
-    // vertices for a unit cube 
-    // 6 faces each with 6 vertices
-    const vertices = 
-    [
-        // Front face
-        0.5,  0.5,  0.5,    
-        0.5, -0.5,  0.5,    
-       -0.5,  0.5,  0.5,
-       -0.5,  0.5,  0.5,
-        0.5, -0.5,  0.5, 
-       -0.5, -0.5,  0.5,
-       
-       // Left face
-       -0.5,  0.5,  0.5, 
-       -0.5, -0.5,  0.5, 
-       -0.5,  0.5, -0.5,
-       -0.5,  0.5, -0.5, 
-       -0.5, -0.5,  0.5, 
-       -0.5, -0.5, -0.5,
-       
-       // Back face
-       -0.5,  0.5, -0.5,
-       -0.5, -0.5, -0.5, 
-        0.5,  0.5, -0.5, 
-        0.5,  0.5, -0.5, 
-       -0.5, -0.5, -0.5, 
-        0.5, -0.5, -0.5,
-
-        // Right face 
-        0.5,  0.5, -0.5,
-        0.5, -0.5, -0.5,
-        0.5,  0.5,  0.5,
-        0.5,  0.5,  0.5,
-        0.5, -0.5,  0.5, 
-        0.5, -0.5, -0.5, 
-
-        // Top face
-        0.5,  0.5,  0.5,
-        0.5,  0.5, -0.5,
-       -0.5,  0.5,  0.5,
-       -0.5,  0.5,  0.5,
-        0.5,  0.5, -0.5, 
-       -0.5,  0.5, -0.5,
-
-       // Bottom face
-        0.5, -0.5,  0.5, 
-        0.5, -0.5, -0.5, 
-       -0.5, -0.5,  0.5, 
-       -0.5, -0.5,  0.5, 
-        0.5, -0.5, -0.5, 
-       -0.5, -0.5, -0.5
-    ];
-     
-    // returns an array with three random numbers (0 to < 1)
-    // Math objects are built in
-    function randomizeColor()
-    {
-        return [Math.random(), Math.random(), Math.random()];
-    }
-
-    // outer-for produces 6 random colors
-    // inner-for executes 6 times per color, pushing that
-    // color to all vertices for a particular face
-    let colors = [];
-    for (let face = 0; face < 6; ++face)
-    {
-        let color_of_face = randomizeColor();
-        for (let vertPerFace = 0; vertPerFace < 6; ++vertPerFace)
-        {
-            colors.push(...color_of_face);
-        }
-    }
-
+    // vertex array for the point cloud
+    const vertices = galaxy(NumPoints);
+    
     // 2) 
 
     const vBuffer = gl.createBuffer();
@@ -136,12 +90,6 @@ window.onload = function initCanvas()
     // load into the currently bound buffer
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     
-    const cBuffer = gl.createBuffer();
-    // bind this buffer as the current array buffer
-    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-    // load into the currently bound buffer
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-
     // 3)
 
     const vertexShader = gl.createShader(gl.VERTEX_SHADER);
@@ -175,14 +123,6 @@ window.onload = function initCanvas()
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     // (position, elements to read, type, normalized, stride, offset)
     gl.vertexAttribPointer(vertexPositionLoc, 3, gl.FLOAT, false, 0, 0);
-
-    // vColor attribute
-    // (linked program, name of attribute in vertex shader)
-    const vertexColorLoc = gl.getAttribLocation(program, 'vColor');
-    gl.enableVertexAttribArray(vertexColorLoc);
-    gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
-    // (position, elements to read, type, normalized, stride, offset)
-    gl.vertexAttribPointer(vertexColorLoc, 3, gl.FLOAT, false, 0, 0);
 
     // tell webgl which program to use
     gl.useProgram(program);
@@ -228,8 +168,8 @@ var render = function()
     /* gl-matrix.js objects (mat4) call transformation methods w/ args (output matrix, input matrix, transform vector) */
 
     // static
-    mat4.translate(matrix, matrix, [0.75, -0.5, 0.0]);
-    mat4.scale(matrix, matrix, [0.10, 0.10, 0.10]);
+    mat4.translate(matrix, matrix, [0.0, 0.25, 0.0]);
+    mat4.scale(matrix, matrix, [0.5, 0.5, 0.5]);
     
     // dynamic
     theta += Math.PI/100 + speedup
@@ -242,5 +182,5 @@ var render = function()
     gl.uniformMatrix4fv(uniformLoc.matrix, false, matrix);
     
     // (draw mode, start vertex, how many vertices to draw)
-    gl.drawArrays(gl.TRIANGLES, 0, NumVertices); 
+    gl.drawArrays(gl.POINTS, 0, NumPoints); 
 }

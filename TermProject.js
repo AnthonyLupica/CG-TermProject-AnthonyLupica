@@ -22,6 +22,7 @@
 // GLOBAL VARS
 var gl;
 var program;
+var canvas;
 const mat4 = glMatrix.mat4;
 const vec3 = glMatrix.vec3;
 
@@ -29,7 +30,9 @@ const NumPoints = 10000; // number of points to generate in the volume
 
 // Interactive vars for transformation
 var theta = 0;
+var rotDirection = 1;
 var speedup = 0;
+var zoom = 0;
 
 // pointCloud accepts a parameter for the "numPoints" to generate
 // and returns an array of numPoints*3 vertices
@@ -62,7 +65,7 @@ window.onload = function initCanvas()
     // console log for succesful call
     console.log('initCanvas() was called');
 
-    const canvas = document.getElementById('TermProject');
+    canvas = document.getElementById('TermProject');
     gl = canvas.getContext('webgl');
     
     if (!gl) 
@@ -140,9 +143,34 @@ window.onkeydown = function handleSpace(event)
     console.log("handleSpace() was called");
     if (event.key == ' ')
     {
-         speedup += Math.PI/100;
+         //speedup += Math.PI/90;
+         zoom += 0.01;
     }
 }
+
+function rotateToCursor()
+{
+    console.log("rotateToCursor() event handler was called");
+
+    var x = event.clientX;     // Get the horizontal coordinate of the mouse 
+    var y = event.clientY;     // Get the vertical coordinate of the mouse 
+    console.log("mouse x:", x, "Mouse y:", y);
+    console.log("CanvasWidth:", canvas.width);
+
+    if (x >= canvas.width / 2)
+    {
+        rotDirection = 1;
+    }
+    else if (x < canvas.width / 2 )
+    {
+        rotDirection = -1;
+    }
+
+    if (x < 200 || x > 1100)
+    {
+        theta += Math.PI / 500;
+    }
+ }
 
 //----------------------------------------------------------------//
 
@@ -160,26 +188,41 @@ var render = function()
         matrix: gl.getUniformLocation(program, 'transformMatrix')
     };
     
-    // create matrix
-    const matrix = mat4.create();
-    
     //-- section for applying transformations --//
-
     /* gl-matrix.js objects (mat4) call transformation methods w/ args (output matrix, input matrix, transform vector) */
 
+    // create matrices
+    const matrix = mat4.create();            // for transformations
+    const cameraMatrix = mat4.create();      // to adjust the camera
+    const perspectivematrix = mat4.create(); // to create perspective 
+
+    /* 
+       (out matrix, vertical FOV in radians, 
+        aspect ratio of canvas, 
+        near cull distance (very close to camera), 
+        far cull distance (very far from camera));
+    */
+    mat4.perspective(perspectivematrix, 90 * Math.PI/180, canvas.width/canvas.height, 1e-4, 1e4);
+    const intermediateMatrix = mat4.create(); // matrix to carry out an "intermediate multiplication" (can't multiply more than two matrices at once)
+    const matrixForShader = mat4.create();    // the final matrix that we will give to the vertex shader
+    
     // static
-    mat4.translate(matrix, matrix, [0.0, 0.25, 0.0]);
     mat4.scale(matrix, matrix, [0.5, 0.5, 0.5]);
     
     // dynamic
-    theta += Math.PI/100 + speedup
-    mat4.rotateZ(matrix, matrix, theta);
-    mat4.rotateY(matrix, matrix, theta);
+    canvas.addEventListener("mousemove", rotateToCursor);
+    theta += Math.PI/500 + speedup;
+    mat4.rotateY(matrix, matrix, rotDirection * theta);
+    
+    mat4.translate(cameraMatrix, cameraMatrix, [0, 0, zoom]);
+    mat4.invert(cameraMatrix, cameraMatrix);
 
+    mat4.multiply(intermediateMatrix, cameraMatrix, matrix);
+    mat4.multiply(matrixForShader, perspectivematrix, intermediateMatrix);
     //-----------------------------------------//
     
     // map CPU matrix to GPU
-    gl.uniformMatrix4fv(uniformLoc.matrix, false, matrix);
+    gl.uniformMatrix4fv(uniformLoc.matrix, false, matrixForShader);
     
     // (draw mode, start vertex, how many vertices to draw)
     gl.drawArrays(gl.POINTS, 0, NumPoints); 

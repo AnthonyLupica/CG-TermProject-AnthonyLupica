@@ -18,7 +18,7 @@
             
             void main()
             {   
-                fColor = vec3(abs(vPosition.x), abs(vPosition.y), 1.0);
+                fColor = vec3(vPosition.x, vPosition.y, 1.0);
                 gl_Position = transformMatrix * vec4(vPosition, 1);
                 gl_PointSize = 1.0;
             }

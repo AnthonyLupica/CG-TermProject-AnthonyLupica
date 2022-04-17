@@ -23,11 +23,13 @@
 var gl;
 var program;
 const mat4 = glMatrix.mat4;
-var theta = 0;
-var speedup = 0;
+
+// # number of vertices for a cube
+const NumVertices = 36; //(6 faces)(2 triangles/face)(3 vertices/triangle)
 
 // Interactive vars for transformation
 var theta = 0;
+var speedup = 0;
 
 //--initialize canvas--//
 
@@ -52,28 +54,82 @@ window.onload = function initCanvas()
     gl.enable(gl.DEPTH_TEST);
 
     // 1)
+
+    // vertices for a unit cube 
+    // 6 faces each with 6 vertices
     const vertices = 
     [
-        0,  1, 0,    // vertex 1 position
-        1, -1, 0,    // vertex 2 position
-       -1, -1, 0     // vertex 3 position 
+        // Front face
+        0.5,  0.5,  0.5,    
+        0.5, -0.5,  0.5,    
+       -0.5,  0.5,  0.5,
+       -0.5,  0.5,  0.5,
+        0.5, -0.5,  0.5, 
+       -0.5, -0.5,  0.5,
+       
+       // Left face
+       -0.5,  0.5,  0.5, 
+       -0.5, -0.5,  0.5, 
+       -0.5,  0.5, -0.5,
+       -0.5,  0.5, -0.5, 
+       -0.5, -0.5,  0.5, 
+       -0.5, -0.5, -0.5,
+       
+       // Back face
+       -0.5,  0.5, -0.5,
+       -0.5, -0.5, -0.5, 
+        0.5,  0.5, -0.5, 
+        0.5,  0.5, -0.5, 
+       -0.5, -0.5, -0.5, 
+        0.5, -0.5, -0.5,
+
+        // Right face 
+        0.5,  0.5, -0.5,
+        0.5, -0.5, -0.5,
+        0.5,  0.5,  0.5,
+        0.5,  0.5,  0.5,
+        0.5, -0.5,  0.5, 
+        0.5, -0.5, -0.5, 
+
+        // Top face
+        0.5,  0.5,  0.5,
+        0.5,  0.5, -0.5,
+       -0.5,  0.5,  0.5,
+       -0.5,  0.5,  0.5,
+        0.5,  0.5, -0.5, 
+       -0.5,  0.5, -0.5,
+
+       // Bottom face
+        0.5, -0.5,  0.5, 
+        0.5, -0.5, -0.5, 
+       -0.5, -0.5,  0.5, 
+       -0.5, -0.5,  0.5, 
+        0.5, -0.5, -0.5, 
+       -0.5, -0.5, -0.5
     ];
      
     // returns an array with three random numbers (0 to < 1)
+    // Math objects are built in
     function randomizeColor()
     {
         return [Math.random(), Math.random(), Math.random()];
     }
 
-    // randomize color data. Call with spread syntax (...)
-    const colors = 
-    [
-        ...randomizeColor(),   // vertex 1 color
-        ...randomizeColor(),   // vertex 2 color
-        ...randomizeColor(),   // vertex 3 color 
-    ];
+    // outer-for produces 6 random colors
+    // inner-for executes 6 times per color, pushing that
+    // color to all vertices for a particular face
+    let colors = [];
+    for (let face = 0; face < 6; ++face)
+    {
+        let color_of_face = randomizeColor();
+        for (let vertPerFace = 0; vertPerFace < 6; ++vertPerFace)
+        {
+            colors.push(...color_of_face);
+        }
+    }
 
     // 2) 
+
     const vBuffer = gl.createBuffer();
     // bind this buffer as the current array buffer
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
@@ -87,6 +143,7 @@ window.onload = function initCanvas()
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
 
     // 3)
+
     const vertexShader = gl.createShader(gl.VERTEX_SHADER);
     // get vertex shader script element from .html
     var vertexSource = document.getElementById('vertex-shader');
@@ -110,6 +167,7 @@ window.onload = function initCanvas()
     gl.linkProgram(program);
 
     // 4)
+
     // vPosition attribute
     // (linked program, name of attribute in vertex shader)
     const vertexPositionLoc = gl.getAttribLocation(program, 'vPosition');
@@ -130,24 +188,30 @@ window.onload = function initCanvas()
     gl.useProgram(program);
 
     //5)
+
     // call render to draw
     render();
 }
+
+//-- Define any user interaction event handlers in this section --//
 
 window.onkeydown = function handleSpace(event) 
 {
     console.log("handleSpace() was called");
     if (event.key == ' ')
     {
-         speedup += Math.PI/12;
+         speedup += Math.PI/100;
     }
 }
+
+//----------------------------------------------------------------//
 
 var render = function() 
 {
     // calls for animation
     requestAnimationFrame(render);
 
+    // set canvas color 
     gl.clear( gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT );
 
     // get uniform locations 
@@ -156,22 +220,27 @@ var render = function()
         matrix: gl.getUniformLocation(program, 'transformMatrix')
     };
     
-    /* gl-matrix.js objects (mat4) call transformation methods w/ args (output matrix, input matrix, transform vector) */
-    
     // create matrix
     const matrix = mat4.create();
     
-    // apply transformations
-    mat4.translate(matrix, matrix, [0.0, 0.2, 0.0]);
-    mat4.scale(matrix, matrix, [0.25, 0.25, 0.25]);
-    // rotation is affected by the dyanamic var "theta"
-    theta += Math.PI/50 + speedup
-    // mat4.rotateZ(matrix, matrix, theta);
-    mat4.rotateZ(matrix, matrix, theta);
+    //-- section for applying transformations --//
 
+    /* gl-matrix.js objects (mat4) call transformation methods w/ args (output matrix, input matrix, transform vector) */
+
+    // static
+    mat4.translate(matrix, matrix, [0.75, -0.5, 0.0]);
+    mat4.scale(matrix, matrix, [0.10, 0.10, 0.10]);
+    
+    // dynamic
+    theta += Math.PI/100 + speedup
+    mat4.rotateZ(matrix, matrix, theta);
+    mat4.rotateY(matrix, matrix, theta);
+
+    //-----------------------------------------//
+    
     // map CPU matrix to GPU
     gl.uniformMatrix4fv(uniformLoc.matrix, false, matrix);
     
     // (draw mode, start vertex, how many vertices to draw)
-    gl.drawArrays(gl.TRIANGLES, 0, 3); 
+    gl.drawArrays(gl.TRIANGLES, 0, NumVertices); 
 }

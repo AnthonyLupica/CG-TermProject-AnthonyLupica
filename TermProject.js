@@ -23,6 +23,8 @@
 var gl;
 var program;
 const mat4 = glMatrix.mat4;
+var theta = 0;
+var speedup = 0;
 
 // Interactive vars for transformation
 var theta = 0;
@@ -52,16 +54,23 @@ window.onload = function initCanvas()
     // 1)
     const vertices = 
     [
-        0, 1, 0,      // vertex 1 position
-        1, -1, 0,     // vertex 2 position
-        -1, -1, 0     // vertex 3 position 
+        0,  1, 0,    // vertex 1 position
+        1, -1, 0,    // vertex 2 position
+       -1, -1, 0     // vertex 3 position 
     ];
+     
+    // returns an array with three random numbers (0 to < 1)
+    function randomizeColor()
+    {
+        return [Math.random(), Math.random(), Math.random()];
+    }
 
+    // randomize color data. Call with spread syntax (...)
     const colors = 
     [
-        1, 0, 0,      // vertex 1 color
-        0, 1, 0,      // vertex 2 color
-        0, 0, 1       // vertex 3 color 
+        ...randomizeColor(),   // vertex 1 color
+        ...randomizeColor(),   // vertex 2 color
+        ...randomizeColor(),   // vertex 3 color 
     ];
 
     // 2) 
@@ -130,7 +139,7 @@ window.onkeydown = function handleSpace(event)
     console.log("handleSpace() was called");
     if (event.key == ' ')
     {
-         theta += Math.PI/12;
+         speedup += Math.PI/12;
     }
 }
 
@@ -154,8 +163,10 @@ var render = function()
     
     // apply transformations
     mat4.translate(matrix, matrix, [0.0, 0.2, 0.0]);
-    mat4.scale(matrix, matrix, [0.5, 0.5, 0.5]);
+    mat4.scale(matrix, matrix, [0.25, 0.25, 0.25]);
     // rotation is affected by the dyanamic var "theta"
+    theta += Math.PI/50 + speedup
+    // mat4.rotateZ(matrix, matrix, theta);
     mat4.rotateZ(matrix, matrix, theta);
 
     // map CPU matrix to GPU

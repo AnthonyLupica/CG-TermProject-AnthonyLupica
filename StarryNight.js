@@ -26,7 +26,7 @@ var canvas;
 const mat4 = glMatrix.mat4;
 const vec3 = glMatrix.vec3;
 
-const NumPoints = 3000; // number of points to generate in the volume
+const NUM_STARS = 3000; // number of points to generate in the volume
 
 // Interactive vars for transformation
 var theta = 0;
@@ -35,12 +35,12 @@ var zoom = 0;
 const MAX_ZOOM = 10;
 const MIN_ZOOM = 0;
 
-// pointCloud accepts a parameter for the "numPoints" to generate
-// and returns an array of numPoints*3 vertices
-function galaxy(numPoints)
+// pointCloud accepts a parameter for the "NUM_STARS" to generate
+// and returns an array of NUM_STARS*3 vertices
+function galaxy(NUM_STARS)
 {
     let points = [];
-    for (let i = 0; i < numPoints; ++i)
+    for (let i = 0; i < NUM_STARS; ++i)
     {
         // generate a random point within a radius of 0.5 of the origin
         // Math.random() generates numbers in [0, 1), so we subtract by 0.5
@@ -84,7 +84,7 @@ window.onload = function initCanvas()
     // 1)
 
     // vertex array for the point cloud
-    const vertices = galaxy(NumPoints);
+    const vertices = galaxy(NUM_STARS);
     
     // 2) 
 
@@ -167,9 +167,9 @@ window.onkeyup = function handleReverse(event)
     }
 }
 
-function rotateToCursor()
+function rotateSpeed()
 {
-    console.log("rotateToCursor() event handler was called");
+    console.log("rotateSpeed() event handler was called");
 
     var xSpeed = Math.abs(event.movementX); // Get the horizontal coordinate difference between calls of the mouse event
     console.log("mouse x coord difference:", xSpeed);
@@ -299,7 +299,7 @@ var render = function()
     mat4.scale(matrix, matrix, [0.5, 0.5, 0.5]);
     
     // dynamic
-    canvas.addEventListener("mousemove", rotateToCursor);
+    canvas.addEventListener("mousemove", rotateSpeed);
     theta += Math.PI/1000;
     mat4.rotateY(matrix, matrix, reverse * theta);
     
@@ -314,5 +314,5 @@ var render = function()
     gl.uniformMatrix4fv(uniformLoc.matrix, false, matrixForShader);
     
     // (draw mode, start vertex, how many vertices to draw)
-    gl.drawArrays(gl.POINTS, 0, NumPoints); 
+    gl.drawArrays(gl.POINTS, 0, NUM_STARS); 
 }

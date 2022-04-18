@@ -26,7 +26,7 @@ var canvas;
 const mat4 = glMatrix.mat4;
 const vec3 = glMatrix.vec3;
 
-const NumPoints = 10000; // number of points to generate in the volume
+const NumPoints = 3000; // number of points to generate in the volume
 
 // Interactive vars for transformation
 var theta = 0;
@@ -144,7 +144,7 @@ window.onkeydown = function handleSpace(event)
     if (event.key == ' ')
     {
          //speedup += Math.PI/90;
-         zoom += 0.01;
+         zoom += 0.50;
     }
 }
 
@@ -211,7 +211,7 @@ var render = function()
     
     // dynamic
     canvas.addEventListener("mousemove", rotateToCursor);
-    theta += Math.PI/500 + speedup;
+    theta += Math.PI/1000 + speedup;
     mat4.rotateY(matrix, matrix, rotDirection * theta);
     
     mat4.translate(cameraMatrix, cameraMatrix, [0, 0, zoom]);

@@ -242,22 +242,22 @@ function rotateSpeed()
     {
         theta += Math.PI / 600;
     }
-    else if (xSpeed >= 52 && xSpeed < 55)
-    {
-        theta += Math.PI / 575;
-    }
-    else if (xSpeed >= 55 && xSpeed < 58)
+    else if (xSpeed >= 52 && xSpeed < 55) // increase by increments of 50 starting now
     {
         theta += Math.PI / 550;
     }
+    else if (xSpeed >= 55 && xSpeed < 58)
+    {
+        theta += Math.PI / 500;
+    }
     else if (xSpeed >= 58 && xSpeed < 61)
     {
-        theta += Math.PI / 525;
+        theta += Math.PI / 450;
     }
     else if (xSpeed >= 61) // highest mouse speed, highest increase in rotation speed
     {
         console.log("highest acceleration was reached");
-        theta += Math.PI / 500;
+        theta += Math.PI / 400;
     }
  }
 

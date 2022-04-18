@@ -39,7 +39,7 @@ const MIN_ZOOM = 0;
 // and returns an array of NUM_STARS*3 vertices
 function galaxy(NUM_STARS)
 {
-    let points = [];
+    let stars = [];
     for (let i = 0; i < NUM_STARS; ++i)
     {
         // generate a random point within a radius of 0.5 of the origin
@@ -54,9 +54,9 @@ function galaxy(NUM_STARS)
         // normalizing the points brings them all into a constant distance from the origin (aka a sphere)
         vec3.normalize(randomPoint, randomPoint);
 
-        points.push(...randomPoint);
+        stars.push(...randomPoint);
     }
-    return points;
+    return stars;
 }
 
 //--initialize canvas--//

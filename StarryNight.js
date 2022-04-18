@@ -5,7 +5,7 @@
 /*
     webgl checklist
 
-    1) make vertices (postion/color)
+    1) make vertices (postion/color/other)
     
     2) create buffers
        load vertices into buffers
@@ -30,12 +30,12 @@ const NUM_STARS = 5000; // number of points to generate in the volume
 
 // Interactive vars for transformation
 var theta = 0;
-var reverse = 1;
+var reverse = 1;      // starts at one. Multiplied by -1 to flip sign on rotation
 var zoom = 0;
-const MAX_ZOOM = 10;
-const MIN_ZOOM = 0;
+const MAX_ZOOM = 7.5; // (maximum distance that the camera can be zoomed out)
+const MIN_ZOOM = 0;   // (minumum (and default) distance of the camera)
 
-// pointCloud accepts a parameter for the "NUM_STARS" to generate
+// galaxy accepts a parameter for the "NUM_STARS" to generate
 // and returns an array of NUM_STARS*3 vertices
 function galaxy(NUM_STARS)
 {
@@ -57,6 +57,28 @@ function galaxy(NUM_STARS)
         stars.push(...randomPoint);
     }
     return stars;
+}
+
+// starSize accepts a parameter for the "NUM_STARS" to generate sizes for
+// and returns an array of NUM_STARS values for random point sizes
+function starSize(NUM_STARS)
+{
+    let starSize = [];
+    for (let i = 0; i < NUM_STARS; ++i)
+    {
+        // Math.random() generates numbers in [0, 1), so we add 0.01
+        // to generate star sizes in [0.01, 1.01)
+        // this is to mathematically guarantee that a point size of 0 is not created
+        const size1 = Math.random() + 0.01;
+        const size2 = Math.random() + 0.01;
+        const size3 = Math.random() + 0.01;
+        
+        // add these values together (minimum is 0.03 and maximum is 3.00)
+        const randomSize = size1 + size2 + size3;  
+
+        starSize.push(randomSize);
+    }
+    return starSize;
 }
 
 //--initialize canvas--//
@@ -85,6 +107,8 @@ window.onload = function initCanvas()
 
     // vertex array for the point cloud
     const vertices = galaxy(NUM_STARS);
+    // array for the star sizes
+    const starSizeArray = starSize(NUM_STARS);
     
     // 2) 
 
@@ -93,7 +117,13 @@ window.onload = function initCanvas()
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     // load into the currently bound buffer
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-    
+
+    const pointBuffer = gl.createBuffer();
+    // bind this buffer as the current array buffer
+    gl.bindBuffer(gl.ARRAY_BUFFER, pointBuffer);
+    // load into the currently bound buffer
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(starSizeArray), gl.STATIC_DRAW);
+
     // 3)
 
     const vertexShader = gl.createShader(gl.VERTEX_SHADER);
@@ -127,6 +157,14 @@ window.onload = function initCanvas()
     gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
     // (position, elements to read, type, normalized, stride, offset)
     gl.vertexAttribPointer(vertexPositionLoc, 3, gl.FLOAT, false, 0, 0);
+
+    // pointSize attribute
+    // (linked program, name of attribute in vertex shader)
+    const pointPositionLoc = gl.getAttribLocation(program, 'pointSize');
+    gl.enableVertexAttribArray(pointPositionLoc);
+    gl.bindBuffer(gl.ARRAY_BUFFER, pointBuffer);
+    // (position, elements to read, type, normalized, stride, offset)
+    gl.vertexAttribPointer(pointPositionLoc, 1, gl.FLOAT, false, 0, 0);
 
     // tell webgl which program to use
     gl.useProgram(program);

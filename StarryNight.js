@@ -32,7 +32,7 @@ const NUM_STARS = 5000; // number of points to generate in the volume
 var theta = 0;
 var reverse = 1;      // starts at one. Multiplied by -1 to flip sign on rotation
 var zoom = 0;
-const MAX_ZOOM = 7.5; // (maximum distance that the camera can be zoomed out)
+const MAX_ZOOM = 5.0; // (maximum distance that the camera can be zoomed out)
 const MIN_ZOOM = 0;   // (minumum (and default) distance of the camera)
 
 // galaxy accepts a parameter for the "NUM_STARS" to generate

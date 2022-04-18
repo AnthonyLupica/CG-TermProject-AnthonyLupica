@@ -26,7 +26,7 @@ var canvas;
 const mat4 = glMatrix.mat4;
 const vec3 = glMatrix.vec3;
 
-const NUM_STARS = 3000; // number of points to generate in the volume
+const NUM_STARS = 3500; // number of points to generate in the volume
 
 // Interactive vars for transformation
 var theta = 0;
@@ -172,9 +172,12 @@ function rotateSpeed()
     console.log("rotateSpeed() event handler was called");
 
     var xSpeed = Math.abs(event.movementX); // Get the horizontal coordinate difference between calls of the mouse event
+    var xPos = event.clientX;               // Get the horizontal x coordinate
+
+    console.log("mouse coordinate:", xPos);
     console.log("mouse x coord difference:", xSpeed);
 
-    if (xSpeed >= 1 && xSpeed < 4) // lowest mouse speed, lowest increase in rotation speed
+    if (xSpeed >= 1 && xSpeed < 4)          // lowest mouse speed, lowest increase in rotation speed
     {
         theta += Math.PI / 1000;         
     }
@@ -242,7 +245,7 @@ function rotateSpeed()
     {
         theta += Math.PI / 600;
     }
-    else if (xSpeed >= 52 && xSpeed < 55) // increase by increments of 50 starting now
+    else if (xSpeed >= 52 && xSpeed < 55)   // increase by increments of 50 starting now
     {
         theta += Math.PI / 550;
     }
@@ -254,10 +257,16 @@ function rotateSpeed()
     {
         theta += Math.PI / 450;
     }
-    else if (xSpeed >= 61) // highest mouse speed, highest increase in rotation speed
+    else if (xSpeed >= 61)                  // highest mouse speed, highest increase in rotation speed
     {
         console.log("highest acceleration was reached");
         theta += Math.PI / 400;
+    }
+
+    // additional speedup towards the far edges
+    if (xPos <= 100 || xPos >= 1400)
+    {
+        theta += Math.PI / 850;
     }
  }
 

@@ -30,9 +30,10 @@ const NumPoints = 3000; // number of points to generate in the volume
 
 // Interactive vars for transformation
 var theta = 0;
-var rotDirection = 1;
-var speedup = 0;
+var reverse = 1;
 var zoom = 0;
+const MAX_ZOOM = 1500;
+const MIN_ZOOM = 0;
 
 // pointCloud accepts a parameter for the "numPoints" to generate
 // and returns an array of numPoints*3 vertices
@@ -138,13 +139,31 @@ window.onload = function initCanvas()
 
 //-- Define any user interaction event handlers in this section --//
 
-window.onkeydown = function handleSpace(event) 
+window.onkeydown = function handleZoom(event) 
 {
-    console.log("handleSpace() was called");
-    if (event.key == ' ')
+    console.log("handleZoom() was called");
+    if (event.key == "ArrowDown")
     {
-         //speedup += Math.PI/90;
-         zoom += 0.50;
+        if(zoom < MAX_ZOOM)
+        {
+            zoom += 0.50;
+        }
+    }
+    if (event.key == "ArrowUp")
+    {
+        if (zoom > MIN_ZOOM)
+        {
+            zoom -= 0.50;
+        }
+    }
+}
+
+window.onkeyup = function handleReverse(event) 
+{
+    console.log("handleReverse() was called");
+    if (event.key == 'r')
+    {
+         reverse *= -1.0;
     }
 }
 
@@ -152,22 +171,92 @@ function rotateToCursor()
 {
     console.log("rotateToCursor() event handler was called");
 
-    var x = event.clientX;     // Get the horizontal coordinate of the mouse 
-    var y = event.clientY;     // Get the vertical coordinate of the mouse 
-    console.log("mouse x:", x, "Mouse y:", y);
-    console.log("CanvasWidth:", canvas.width);
+    var xSpeed = Math.abs(event.movementX); // Get the horizontal coordinate difference between calls of the mouse event
+    console.log("mouse x coord difference:", xSpeed);
 
-    if (x >= canvas.width / 2)
+    if (xSpeed >= 1 && xSpeed < 4) // lowest mouse speed, lowest increase in rotation speed
     {
-        rotDirection = 1;
+        theta += Math.PI / 1000;         
     }
-    else if (x < canvas.width / 2 )
+    else if (xSpeed >= 4 && xSpeed < 7)
     {
-        rotDirection = -1;
+        theta += Math.PI / 975; 
     }
-
-    if (x < 200 || x > 1100)
+    else if (xSpeed >= 7 && xSpeed < 10)
     {
+        theta += Math.PI / 950; 
+    }
+    else if (xSpeed >= 10 && xSpeed < 13)
+    {
+        theta += Math.PI / 925; 
+    }
+    else if (xSpeed >= 13 && xSpeed < 16)
+    {
+        theta += Math.PI / 900; 
+    }
+    else if (xSpeed >= 16 && xSpeed < 19)
+    {
+        theta += Math.PI / 875; 
+    }
+    else if (xSpeed >= 19 && xSpeed < 22)
+    {
+        theta += Math.PI / 850; 
+    }
+    else if (xSpeed >= 22 && xSpeed < 25)
+    {
+        theta += Math.PI / 825; 
+    }
+    else if (xSpeed >= 25 && xSpeed < 28)
+    {
+        theta += Math.PI / 800; 
+    }
+    else if (xSpeed >= 28 && xSpeed < 31)
+    {
+        theta += Math.PI / 775; 
+    }
+    else if (xSpeed >= 31 && xSpeed < 34)
+    {
+        theta += Math.PI / 750; 
+    }
+    else if (xSpeed >= 34 && xSpeed < 37)
+    {
+        theta += Math.PI / 725; 
+    }
+    else if (xSpeed >= 37 && xSpeed < 40)
+    {
+        theta += Math.PI / 700; 
+    }
+    else if (xSpeed >= 40 && xSpeed < 43)
+    {
+        theta += Math.PI / 675; 
+    }
+    else if (xSpeed >= 43 && xSpeed < 46)
+    {
+        theta += Math.PI / 650; 
+    }
+    else if (xSpeed >= 46 && xSpeed < 49)
+    {
+        theta += Math.PI / 625; 
+    }
+    else if (xSpeed >= 49 && xSpeed < 52)
+    {
+        theta += Math.PI / 600;
+    }
+    else if (xSpeed >= 52 && xSpeed < 55)
+    {
+        theta += Math.PI / 575;
+    }
+    else if (xSpeed >= 55 && xSpeed < 58)
+    {
+        theta += Math.PI / 550;
+    }
+    else if (xSpeed >= 58 && xSpeed < 61)
+    {
+        theta += Math.PI / 525;
+    }
+    else if (xSpeed >= 61) // highest mouse speed, highest increase in rotation speed
+    {
+        console.log("highest acceleration was reached");
         theta += Math.PI / 500;
     }
  }
@@ -211,8 +300,8 @@ var render = function()
     
     // dynamic
     canvas.addEventListener("mousemove", rotateToCursor);
-    theta += Math.PI/1000 + speedup;
-    mat4.rotateY(matrix, matrix, rotDirection * theta);
+    theta += Math.PI/1000;
+    mat4.rotateY(matrix, matrix, reverse * theta);
     
     mat4.translate(cameraMatrix, cameraMatrix, [0, 0, zoom]);
     mat4.invert(cameraMatrix, cameraMatrix);

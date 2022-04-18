@@ -164,7 +164,9 @@ window.onload = function initCanvas()
     gl.enableVertexAttribArray(pointPositionLoc);
     gl.bindBuffer(gl.ARRAY_BUFFER, pointBuffer);
     // (position, elements to read, type, normalized, stride, offset)
-    gl.vertexAttribPointer(pointPositionLoc, 1, gl.FLOAT, false, 0, 0);
+    // Not sure it is technically correct to read in 3 elements at a time 
+    // since the pointsizes are single values, but I like this more visually
+    gl.vertexAttribPointer(pointPositionLoc, 3, gl.FLOAT, false, 0, 0);
 
     // tell webgl which program to use
     gl.useProgram(program);

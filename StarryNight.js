@@ -26,7 +26,7 @@ var canvas;
 const mat4 = glMatrix.mat4;
 const vec3 = glMatrix.vec3;
 
-const NUM_STARS = 3500; // number of points to generate in the volume
+const NUM_STARS = 5000; // number of points to generate in the volume
 
 // Interactive vars for transformation
 var theta = 0;

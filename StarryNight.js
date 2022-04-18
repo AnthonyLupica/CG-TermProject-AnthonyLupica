@@ -312,9 +312,7 @@ var render = function()
     theta += Math.PI/1000;
     mat4.rotateZ(matrix, matrix, reverse * theta);
     mat4.rotateY(matrix, matrix, reverse * theta);
-    //mat4.rotateZ(matrix, matrix, reverse * theta);
 
-    
     mat4.translate(cameraMatrix, cameraMatrix, [0, 0, zoom]);
     mat4.invert(cameraMatrix, cameraMatrix);
 

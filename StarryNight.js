@@ -32,7 +32,7 @@ const NumPoints = 3000; // number of points to generate in the volume
 var theta = 0;
 var reverse = 1;
 var zoom = 0;
-const MAX_ZOOM = 1500;
+const MAX_ZOOM = 10;
 const MIN_ZOOM = 0;
 
 // pointCloud accepts a parameter for the "numPoints" to generate

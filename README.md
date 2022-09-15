@@ -24,12 +24,6 @@ application with NUI (Kinect, LeapMotion, ...), a 3D online application for mult
 graphical collaboration, a smart phone app with 3D control, graphical interactions (I/O)
 with IoT (e.g. Raspberry Pi), ...
 
-Contact me if you want to do a special project to complement an existing project for your
-research, for another course or for your personal interests.
-
-Bonus:
-3D Graphics/Game Engine
-
 Design Report, Demo, Submission:
 
 • Write a 1-page progress report of your project. It should contain a description of
@@ -46,20 +40,6 @@ member, lessons learned and possible future work. Submit your project along
 with the final report and the presentation PPT by Tuesday, April 19, 2022.
 
 • Make a five-minute presentation and demo of your project starting Tuesday, April
-19, 2022. Your PPT only needs about five pages: tile of your project with the
+19, 2022. Your PPT only needs about five pages: title of your project with the
 names of the group members, description of the project, design of the system,
 implementation tools and issues (if any), and conclusions.
-
-• Take a 100x100 pixel screen image of your running project.
-
-• Make a short screen-capture video that can demonstrate the features of your
-application.
-
-• Copy your complete project with all required files (including source files, images
-and videos) into a directory named CG-Project-Names-of-Group-Members. Add
-“Bonus” to the name if your project includes bonus parts and demonstrate the
-bonus parts in your screen-capture video.
-
-• Submit through GoogleDrive with the submitting folder name of CG-Project-
-Names-of-Group-Members and share it with uacsxiao@gmail.com
-
